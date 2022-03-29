@@ -1,0 +1,29 @@
+name: Deploy
+
+on:
+  push:
+    branches: [master]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: "14"
+
+      - run: yarn install
+      - run: yarn vite build
+
+      - name: Deploy with gh-pages
+        run: |
+          echo "test(7) "
+          git config --global user.email "dezhik@yandex.ru"
+          git config --global user.name "Serje"
+          git remote set-url origin https://git:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git
+          npx gh-pages -d dist
+          ls -al dist
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
